@@ -180,14 +180,14 @@ Refer to the [CONTRIBUTING.md](./CONTRIBUTING.md) file for guidelines on contrib
 Results achieved using sample scripts, example patches to third-party repositories and NNCF configuration files provided 
 with this repository. See README.md files for [sample scripts](#model-compression-samples) and [example patches](#third-party-repository-integration) 
 to find instruction and links to exact configuration files and final checkpoints.
-- [PyTorch models](#torch_models)
+- [PyTorch models](#pytorch-models)
   * [Classification](#torch_classification)
   * [Object detection](#torch_object_detection)
   * [Semantic segmentation](#torch_semantic-segmentation)
   * [Natural language processing (3rd-party training pipelines)](#torch_nlp)
   * [Object detection (3rd-party training pipelines)](#torch_object_detection_mmdetection)
   * [Instance Segmentation (3rd-party training pipelines)](#torch_instance_segmentation_mmdetection)
-- [TensorFlow models](#tensorflow_models)
+- [TensorFlow models](#tensorflow-models)
   * [Classification](#classification)
   * [Object detection](#object-detection)
   * [Instance segmentation](#instance-segmentation)  
