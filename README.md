@@ -181,20 +181,21 @@ Results achieved using sample scripts, example patches to third-party repositori
 with this repository. See README.md files for [sample scripts](#model-compression-samples) and [example patches](#third-party-repository-integration) 
 to find instruction and links to exact configuration files and final checkpoints.
 - [PyTorch models](#pytorch-models)
-  * [Classification](#torch_classification)
-  * [Object detection](#torch_object_detection)
-  * [Semantic segmentation](#torch_semantic-segmentation)
-  * [Natural language processing (3rd-party training pipelines)](#torch_nlp)
-  * [Object detection (3rd-party training pipelines)](#torch_object_detection_mmdetection)
-  * [Instance Segmentation (3rd-party training pipelines)](#torch_instance_segmentation_mmdetection)
+  * [Classification](#pytorch_classification)
+  * [Object detection](#pytorch_object_detection)
+  * [Semantic segmentation](#pytorch_semantic_segmentation)
+  * [Natural language processing (3rd-party training pipelines)](#pytorch_nlp)
+  * [Object detection (3rd-party training pipelines)](#pytorch_object_detection_mmdetection)
+  * [Instance Segmentation (3rd-party training pipelines)](#pytorch_instance_segmentation_mmdetection)
 - [TensorFlow models](#tensorflow-models)
-  * [Classification](#classification)
-  * [Object detection](#object-detection)
-  * [Instance segmentation](#instance-segmentation)  
+  * [Classification](#tensorflow_classification)
+  * [Object detection](#tensorflow_object_detection)
+  * [Instance segmentation](#tensorflow_instance_segmentation)  
 
 ### PyTorch models
 
-#### Classification 
+<a name="pytorch_classification"></a>
+#### Classification
 
 |PyTorch Model|<img width="115" height="1">Compression algorithm<img width="115" height="1">|Dataset|Accuracy (Drop) %|
 | :---: | :---: | :---: | :---: |
@@ -220,6 +221,7 @@ to find instruction and links to exact configuration files and final checkpoints
 |ResNet-34|Filter pruning, 40%, geometric median criterion|ImageNet|72.73 (0.57)|
 |GoogLeNet|Filter pruning, 40%, geometric median criterion|ImageNet|68.82 (0.93)|
 
+<a name="pytorch_object_detection"></a>
 #### Object detection
 
 |PyTorch Model|Compression algorithm|Dataset|mAP (drop) %|
@@ -231,6 +233,7 @@ to find instruction and links to exact configuration files and final checkpoints
 |SSD512-VGG-BN|INT8|VOC12+07 train, VOC07 eval|80.12 (0.14)|
 |SSD512-VGG-BN|INT8 + Sparsity 70% (Magnitude)|VOC12+07 train, VOC07 eval|79.67 (0.59)|
 
+<a name="pytorch_semantic_segmentation"></a>
 #### Semantic segmentation
 
 |PyTorch Model|<img width="125" height="1">Compression algorithm<img width="125" height="1">|Dataset|Accuracy (Drop) %|
@@ -243,7 +246,7 @@ to find instruction and links to exact configuration files and final checkpoints
 |UNet|INT8 + Sparsity 60% (Magnitude)|Mapillary|55.65 (0.58)|
 |UNet|Filter pruning, 25%, geometric median criterion|Mapillary|55.62 (0.61)|
 
-
+<a name="pytorch_nlp"></a>
 #### NLP
 
 |PyTorch Model|<img width="20" height="1">Compression algorithm<img width="20" height="1">|Dataset|Accuracy (Drop) %|
@@ -255,7 +258,7 @@ to find instruction and links to exact configuration files and final checkpoints
 |MobileBERT|INT8|SQuAD v1.1|F1: 89.4 (0.58)|
 |GPT-2|INT8|WikiText-2 (raw)|perplexity: 20.9 (-1.17)|
 
-
+<a name="pytorch_object_detection_mmdetection"></a>
 #### Object detection (MMDetection)
 
 |PyTorch Model|<img width="60" height="1">Compression algorithm<img width="60" height="1">|Dataset|mAP (drop) %|
@@ -264,6 +267,7 @@ to find instruction and links to exact configuration files and final checkpoints
 |RetinaNet-ResNet50-FPN|INT8 + Sparsity 50%|COCO2017|bbox: 34.7 (0.9)|
 |RetinaNet-ResNeXt101-64x4d-FPN|INT8|COCO2017|bbox: 39.1 (0.5)|
 
+<a name="pytorch_instance_segmentation_mmdetection"></a>
 #### Instance Segmentation (MMDetection)
 
 |PyTorch Model|<img width="85" height="1">Compression algorithm<img width="85" height="1">|Dataset|mAP (drop) %|
@@ -272,6 +276,7 @@ to find instruction and links to exact configuration files and final checkpoints
 
 ### TensorFlow models
 
+<a name="tensorflow_classification"></a>
 #### Classification
 
 |Tensorflow Model|Compression algorithm|Dataset|Accuracy (Drop) %|
@@ -293,6 +298,7 @@ to find instruction and links to exact configuration files and final checkpoints
 |ResNet50|Filter Pruning 40%, geometric_median criterion + INT8 (per-tensor for weights)|ImageNet|75.08 (-0.04)|
 |TensorFlow Hub MobileNet V2|Sparsity 35% (Magnitude)|ImageNet|71.90 (-0.06)|
 
+<a name="tensorflow_object_detection"></a>
 #### Object detection
 
 |TensorFlow Model|Compression algorithm|Dataset|mAP (drop) %|
@@ -304,6 +310,7 @@ to find instruction and links to exact configuration files and final checkpoints
 |YOLOv4|INT8 (per-channel, symmetric for weights; per-tensor, asymmetric for activations)|COCO2017|46.15 (0.89)|
 |YOLOv4|Sparsity 50% (Magnitude)|COCO2017|46.54 (0.50)|
 
+<a name="tensorflow_instance_segmentation"></a>
 #### Instance segmentation
 
 |TensorFlow Model|<img width="110" height="1">Compression algorithm<img width="110" height="1">|Dataset|mAP (drop) %|
