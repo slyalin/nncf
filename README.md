@@ -144,33 +144,46 @@ This repository is tested on Python* 3.6.2+, PyTorch* 1.8.1 (NVidia CUDA\* Toolk
 ## Installation
 We suggest to install or use the package in the [Python virtual environment](https://docs.python.org/3/tutorial/venv.html).
 
+First, create a virtual environment with the version of Python you're going to use and activate it.
+
+Then you need to install one of the deep learning frameworks [PyTorch](https://pytorch.org/) or [TensorFlow](https://www.tensorflow.org/). Please follow to [TensorFlow installation guide](https://www.tensorflow.org/install/) or [PyTorch installation guide](https://pytorch.org/get-started/locally/#start-locally).
+
+When one of those backends has been installed, NNCF can be installed as follow: 
 
 #### As a package built from a checked-out repository:
-1) Install the following system dependencies:
 
-`sudo apt-get install python3-dev`
+Install the package and its dependencies by running the following in the repository root directory:
+```
+python setup.py install
+```
+Alternatively, If you don't install any backend you can install NNCF and PyTorch in one line with:
+```
+python setup.py install --torch
+```
+Install NNCF and TensorFlow in one line:
+```
+python setup.py install --tf
+```
 
-2) Install the package and its dependencies by running the following in the repository root directory:
-
-`python setup.py install`
-
-
-_NB_: For launching example scripts in this repository, we recommend replacing the `install` option above with `develop` and setting the `PYTHONPATH` variable to the root of the checked-out repository.
+_NB_: For launching example scripts in this repository, we need to  recommend replacing the `install` option above with `develop` and setting the `PYTHONPATH` variable to the root of the checked-out repository.
 
 #### As a PyPI package:
+
 NNCF can be installed as a regular PyPI package via pip:
 ```
-sudo apt install python3-dev
 pip install nncf
+```
+Alternatively, If you don't install any backend you can install NNCF and PyTorch in one line with:
+```
+pip install nncf[torch]
+```
+Install NNCF and TensorFlow in one line:
+```
+pip install nncf[tf]
 ```
 
 #### As a Docker image
 Use one of the Dockerfiles in the [docker](./docker) directory to build an image with an environment already set up and ready for running NNCF [sample scripts](#model-compression-samples).
-
-**NOTE**: If you want to use sample training scripts provided in the NNCF repository under `examples`, you should install the corresponding Python package dependencies:
-```
-pip install -r examples/torch/requirements.txt
-```
 
 ## Contributing
 Refer to the [CONTRIBUTING.md](./CONTRIBUTING.md) file for guidelines on contributions to the NNCF repository.
