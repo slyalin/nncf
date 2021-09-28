@@ -32,6 +32,18 @@
                 "bits": 8,
                 "mode": "asymmetric",
                 "granularity": ["perchannel", "pertensor"]
+            },
+            "q8_w_sym_t": {
+                "bits": 8,
+                "mode": "symmetric",
+                "level_low": -128,
+                "level_high": 127,
+                "granularity": ["pertensor"]
+            },
+            "q8_w_asym_t": {
+                "bits": 8,
+                "mode": "asymmetric",
+                "granularity": ["pertensor"]
             }
         }
     },
@@ -61,7 +73,7 @@
             "type": "MatMul",
             "quantization": {
                 "activations": "q8_a",
-                "weights": ["q8_w_sym", "q8_w_asym"]
+                "weights": ["q8_w_sym_t", "q8_w_asym_t"]
             }
         },
         {
@@ -232,7 +244,12 @@
                 "scales": "unified"
             }
         },
-        {"type": "Flatten"},
+        {
+            "type": "Flatten",
+            "quantization": {
+                "activations": "q8_a"
+            }
+        },
         {"type": "Squeeze"},
         {"type": "Unsqueeze"},
         {"type": "Split"},
@@ -243,10 +260,21 @@
         {"type": "StridedSlice"},
         {"type": "ShuffleChannels"},
         {"type": "Broadcast"},
-        {"type": "Pad"},
+        {
+            "type": "Pad",
+            "quantization": {
+                "activations": "q8_a"
+            }
+        },
         {"type": "ConvertLike"},
         // NNCF-specific extensions are below:
         {"type": "Embedding"}, // relying on the rule to use default config for weighted ops with unspecified quantization
-        {"type": "EmbeddingBag"}
+        {"type": "EmbeddingBag"},
+        {
+            "type": "Softmax",
+            "quantization": {
+                "activations": "q8_a"
+            }
+        }
     ]
 }

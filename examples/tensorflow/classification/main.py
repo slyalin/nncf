@@ -207,9 +207,9 @@ def run(config):
 
             metrics = [
                 tf.keras.metrics.CategoricalAccuracy(name='acc@1'),
-                tf.keras.metrics.TopKCategoricalAccuracy(k=5, name='acc@5'),
-                tfa.metrics.MeanMetricWrapper(loss_obj, name='ce_loss'),
-                tfa.metrics.MeanMetricWrapper(compression_ctrl.loss, name='cr_loss')
+                tf.keras.metrics.TopKCategoricalAccuracy(k=5, name='acc@5')
+#                tfa.metrics.MeanMetricWrapper(loss_obj, name='ce_loss'),
+#                tfa.metrics.MeanMetricWrapper(compression_ctrl.loss, name='cr_loss')
             ]
 
             compress_model.compile(optimizer=optimizer,

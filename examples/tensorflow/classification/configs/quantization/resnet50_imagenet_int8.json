@@ -22,13 +22,35 @@
         "initializer": {
             "batchnorm_adaptation": {
                 "num_bn_adaptation_samples": 2048
+            },
+            "range": {
+                "type": "min_max"
             }
         },
-        "weights": {
-            "per_channel": false
-        },
-        "activations": {
-            "per_channel": false
+        "disable_saturation_fix": true,
+        "ignored_scopes": ["conv1_pad"],
+        "fake_quantize_ignored_scopes": [
+            "conv2_block1_0_bn/fake_quantize",
+            "conv2_block2_3_bn/fake_quantize",
+            "conv2_block3_3_bn/fake_quantize",
+            "conv3_block1_0_bn/fake_quantize",
+            "conv3_block2_3_bn/fake_quantize",
+            "conv3_block3_3_bn/fake_quantize",
+            "conv3_block4_3_bn/fake_quantize",
+            "conv4_block1_0_bn/fake_quantize",
+            "conv4_block2_3_bn/fake_quantize",
+            "conv4_block3_3_bn/fake_quantize",
+            "conv4_block4_3_bn/fake_quantize",
+            "conv4_block5_3_bn/fake_quantize",
+            "conv4_block6_3_bn/fake_quantize",
+            "conv5_block1_0_bn/fake_quantize",
+            "conv5_block2_3_bn/fake_quantize",
+            "conv5_block3_3_bn/fake_quantize"
+        ],
+        "fake_quantize_scope_overrides": {
+            "{re}conv\\d_block1_out/fake_quantize": {
+                "num_bits": 7
+            }
         }
     }
 }

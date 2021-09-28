@@ -551,6 +551,40 @@ QUANTIZATION_SCHEMA = {
                                                               "appropriate target_devices are chosen "
                                                               "the fix will be applied. For a detailed information "
                                                               ", please, take look at the docs"),
+        "fake_quantize_ignored_scopes": with_attributes(make_string_or_array_of_strings_schema(),
+                                                        description=""),
+        "fake_quantize_scope_overrides": {
+            "type": "object",
+            "properties": {
+                "weights": {
+                    "type": "object",
+                    "patternProperties": {
+                        ".*": {
+                            "type": "object",
+                            "properties": {
+                                **QUANTIZER_CONFIG_PROPERTIES,
+                                **RANGE_INIT_CONFIG_PROPERTIES,
+                            },
+                            "additionalProperties": False
+                        },
+                    },
+                },
+                "activations": {
+                    "type": "object",
+                    "patternProperties": {
+                        ".*": {
+                            "type": "object",
+                            "properties": {
+                                **QUANTIZER_CONFIG_PROPERTIES,
+                                **RANGE_INIT_CONFIG_PROPERTIES,
+                            },
+                            "additionalProperties": False
+                        },
+                    },
+                }
+            },
+            "description": ""
+        },
         **STAGED_QUANTIZATION_PARAMS,
         **COMMON_COMPRESSION_ALGORITHM_PROPERTIES,
     },

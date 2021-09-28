@@ -16,12 +16,12 @@ from nncf.version import BKC_TF_VERSION
 
 import tensorflow
 from pkg_resources import parse_version
-if parse_version(BKC_TF_VERSION).base_version != parse_version(tensorflow.__version__).base_version:
-    raise RuntimeError(
-         'NNCF only supports tensorflow=={bkc}, while current tensorflow version is {curr}'.format(
-         bkc=BKC_TF_VERSION,
-         curr=tensorflow.__version__
-    ))
+# if parse_version(BKC_TF_VERSION).base_version != parse_version(tensorflow.__version__).base_version:
+#     raise RuntimeError(
+#          'NNCF only supports tensorflow=={bkc}, while current tensorflow version is {curr}'.format(
+#          bkc=BKC_TF_VERSION,
+#          curr=tensorflow.__version__
+#     ))
 
 
 from nncf.tensorflow.helpers import create_compressed_model

@@ -47,6 +47,7 @@ from nncf.common.quantization.structs import QuantizerGroup
 from nncf.common.schedulers import BaseCompressionScheduler
 from nncf.common.stateful_classes_registry import TF_STATEFUL_CLASSES
 from nncf.common.statistics import NNCFStatistics
+from nncf.common.utils.helpers import matches_any
 from nncf.common.utils.helpers import should_consider_scope
 from nncf.common.utils.logger import logger
 from nncf.config.extractors import extract_bn_adaptation_init_params
@@ -433,6 +434,10 @@ class QuantizationBuilder(TFCompressionAlgorithmBuilder):
                                                                    quantizable_weighted_layer_nodes,
                                                                    custom_layer_nodes,
                                                                    model)
+
+        fake_quantize_ignored_scopes = self._get_algo_specific_config_section().get('fake_quantize_ignored_scopes', [])
+        fake_quantize_scope_overrides = self._get_algo_specific_config_section().get('fake_quantize_scope_overrides', {})
+
         setup = TFQuantizationSetup()
 
         quantized_layer_names_vs_qconfigs = {}  # type: Dict[str, QuantizerConfig]
@@ -478,6 +483,15 @@ class QuantizationBuilder(TFCompressionAlgorithmBuilder):
                 target_node_name = ip.target_node_name
                 input_port_id = ip.input_port_id
                 fake_quantize_name = self._get_fake_quantize_name(target_node_name, input_port_id)
+
+                if matches_any(fake_quantize_name, fake_quantize_ignored_scopes):
+                    continue
+
+                for key in fake_quantize_scope_overrides:
+                    if matches_any(fake_quantize_name, [key]):
+                        for name, value in fake_quantize_scope_overrides[key].items():
+                            qp.qconfig.__setattr__(name, value)
+
                 quantizer_spec = TFQuantizerSpec.from_config(qp.qconfig, narrow_range=False, half_range=False)
                 fake_quantize_layer = FakeQuantize(
                     quantizer_spec,

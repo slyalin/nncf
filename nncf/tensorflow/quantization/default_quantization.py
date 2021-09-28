@@ -38,9 +38,14 @@ DEFAULT_TF_QUANT_TRAIT_TO_OP_DICT = {
         layer_metatypes.TFELULayerMetatype,
         layer_metatypes.TFPReLULayerMetatype,
         layer_metatypes.TFLeakyReLULayerMetatype,
-        layer_metatypes.TFActivationLayerMetatype
+        layer_metatypes.TFActivationLayerMetatype,
+        layer_metatypes.TFSoftmaxLayerMetatype,
+        layer_metatypes.TFZeroPadding1DLayerMetatype,
+        layer_metatypes.TFZeroPadding2DLayerMetatype,
+        layer_metatypes.TFZeroPadding3DLayerMetatype,
+        layer_metatypes.TFFlattenLayerMetatype,
     ],
-    QuantizationTrait.NON_QUANTIZABLE: [layer_metatypes.TFSoftmaxLayerMetatype],
+    QuantizationTrait.NON_QUANTIZABLE: [],
     QuantizationTrait.CONCAT: [layer_metatypes.TFConcatenateLayerMetatype],
     QuantizationTrait.OUTPUT_QUANTIZATION_AS_WEIGHTS: [layer_metatypes.TFEmbeddingLayerMetatype]
 }

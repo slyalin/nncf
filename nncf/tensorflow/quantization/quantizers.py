@@ -286,6 +286,9 @@ class SymmetricQuantizer(Quantizer):
         self.signedness_to_force = qspec.signedness_to_force
         self._half_range = qspec.half_range
 
+        if self.signedness_to_force:
+            self.narrow_range = True
+
     @property
     def half_range(self):
         return self._half_range
@@ -367,6 +370,8 @@ class SymmetricQuantizer(Quantizer):
         if self.signedness_to_force is None:
             sign = tf.reduce_any(tf.less(min_values, 0))
             weights['signed_var'].assign(-1.0 if sign else 0.0)
+            if sign:
+                self.narrow_range = True
         ranges = tf.maximum(tf.abs(max_values), tf.abs(min_values))
         max_range = tf.reduce_max(ranges)
         lower_threshold = tf.maximum(eps * max_range, min_range)
