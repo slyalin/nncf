@@ -69,7 +69,9 @@ INSTALL_REQUIRES = ["ninja>=1.10.0.post2",
                     "pandas>=1.1.5; python_version>='3.7'",
                     "scikit-learn~=0.24.0; python_version<'3.7'",
                     "scikit-learn>=0.24.0; python_version>='3.7'",
-                    "wheel>=0.36.1"]
+                    "wheel>=0.36.1",
+                    "py-cpuinfo>=8.0.0",
+                    "pyyaml>=6.0"]
 
 
 python_version = sys.version_info
