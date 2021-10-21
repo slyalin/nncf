@@ -102,6 +102,15 @@ python main.py \
 --to-h5=../../results/mobilenet_v2_int8.h5
 ```
 
+To export trained model to the **SavedModel** for run it using Intel-Tensorflow or TensorFlow with the OneDNN backend, use the following command:
+```bash
+python main.py \
+--mode=export \
+--config=configs/quantization/mobilenet_v1_imagenet_int8.json \
+--resume=<path_to_trained_model_checkpoint> \
+--to-intel-tensorflow=.../../results/intel_tensorflow_saved_model
+```
+
 ### Export to OpenVINO™ Intermediate Representation (IR)
 
 To export a model to the OpenVINO IR and run it using the Intel® Deep Learning Deployment Toolkit, refer to this [tutorial](https://software.intel.com/en-us/openvino-toolkit).

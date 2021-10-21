@@ -65,6 +65,13 @@ def get_argument_parser():
         help="Use pretrained models from the tf.keras.applications",
         action="store_true",
     )
+    parser.add_argument(
+        "--to-intel-tensorflow",
+        type=str,
+        metavar='PATH',
+        default=None,
+        help='Export the compressed model for Intel Tensorflow to the TensorFlow SavedModel format '
+             'by given path.')
     return parser
 
 
@@ -291,6 +298,14 @@ def run(config):
         compression_ctrl.export_model(save_path, save_format)
         logger.info('Saved to {}'.format(save_path))
 
+        if config.to_intel_tensorflow is not None:
+            save_path = config.to_intel_tensorflow
+            from nncf.experimental.intel_tensorflow.exporter import IntelTensorFlowExporter
+            compression_ctrl.prepare_for_export()
+            exporter = IntelTensorFlowExporter(compression_ctrl.model)
+            exporter.export_model(save_path)
+            logger.info('The model for Intel TensorFlow was saved to {}'.format(save_path))
+
 
 def export(config):
     model, model_params = get_model(config.model,
@@ -326,6 +341,14 @@ def export(config):
     save_path, save_format = get_saving_parameters(config)
     compression_ctrl.export_model(save_path, save_format)
     logger.info('Saved to {}'.format(save_path))
+
+    if config.to_intel_tensorflow is not None:
+        save_path = config.to_intel_tensorflow
+        from nncf.experimental.intel_tensorflow.exporter import IntelTensorFlowExporter
+        compression_ctrl.prepare_for_export()
+        exporter = IntelTensorFlowExporter(compression_ctrl.model)
+        exporter.export_model(save_path)
+        logger.info('The model for Intel TensorFlow was saved to {}'.format(save_path))
 
 
 def main(argv):
