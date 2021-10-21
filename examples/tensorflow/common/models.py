@@ -24,6 +24,7 @@ from tensorflow.python.lib.io import file_io
 
 from examples.tensorflow.common.vgg import VGG16
 from examples.tensorflow.common.mobilenet import MobileNet
+from examples.tensorflow.common.mobilenet_v2 import MobileNetV2
 
 def mobilenet_v2_100_224(input_shape=None,
                          trainable=True,

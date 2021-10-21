@@ -38,7 +38,7 @@ def add_output_graph_node(output_graph, output_node_maps, output_node):
     output_graph.node.extend([output_node])
 
 
-def create_quantize_node(node_name, postfix, output_graph, output_node_maps, input_node_name):
+def create_quantize_node(node_name, postfix, output_graph, output_node_maps, input_node_name, dtype = tf.dtypes.quint8):
     quantize_node_name = node_name + "_quantize_" + postfix
     min_input_name = quantize_node_name + "_min"
     min_node = helper.create_constant_node(
@@ -52,7 +52,7 @@ def create_quantize_node(node_name, postfix, output_graph, output_node_maps, inp
         "QuantizeV2", quantize_node_name,
         [input_node_name, min_input_name, max_input_name])
 
-    helper.set_attr_dtype(quantize_input_node, "T", tf.dtypes.quint8)
+    helper.set_attr_dtype(quantize_input_node, "T", dtype)
     helper.set_attr_string(quantize_input_node, "mode", b"SCALED")
     helper.set_attr_string(quantize_input_node, "round_mode", b"HALF_TO_EVEN")
     add_output_graph_node(output_graph, output_node_maps, quantize_input_node)
@@ -63,17 +63,45 @@ def create_quantize_node(node_name, postfix, output_graph, output_node_maps, inp
     return quantize_node_name, min_output_name, max_output_name
 
 
-def create_dequantize_node(node_name, postfix, output_graph, output_node_maps, input, input_min, input_max):
+def create_dequantize_node(node_name, postfix, output_graph, output_node_maps, input, input_min, input_max, dtype = tf.dtypes.quint8):
     dequantize_node_name = node_name + "_dequantize_" + postfix
 
     dequantize_node = helper.create_node(
         "Dequantize", dequantize_node_name,
         [input, input_min, input_max])
-    helper.set_attr_dtype(dequantize_node, "T", tf.dtypes.quint8)
+    helper.set_attr_dtype(dequantize_node, "T", dtype)
     helper.set_attr_string(dequantize_node, "mode",b"SCALED")
     add_output_graph_node(output_graph, output_node_maps, dequantize_node)
 
     return dequantize_node_name
+
+
+def need_to_check(node_type):
+    op_list = ("ConcatV2", "Conv2D", "DepthwiseConv2D", "QuantizeV2", "DepthwiseConv2dNative",
+               "MaxPool", "Requantize", "RequantizePerChannel", "AvgPool", "Pad",
+               "CropAndResize", "Dequantize", "Mean", "MatMul", "FakeQuantWithMinMaxVars")
+    return any([node_type.find(i) != -1 for i in op_list])
+
+
+def find_relu_node(node_name_mapping, node):
+    if node.op in ("Relu", "Relu6") or \
+        (node.op.find("AndRelu") != -1 and 'alpha' not in node.attr):
+        return True
+    elif 'T' in node.attr and node.attr['T'].type in (dtypes.quint8, dtypes.uint8):
+        return True
+    elif 'T' in node.attr and node.attr['T'].type in (dtypes.quint8, dtypes.uint8):
+        return True
+    elif (node.op.find("QuantizedConv") != -1
+          or node.op.find("QuantizedDepthwiseConv") != -1 or
+          node.op.find("QuantizedMatMul") != -1
+          ) and (node.op.find("Relu") == -1 or 'alpha' in node.attr):
+        return False
+    elif need_to_check(node.op):
+        input_node = node_name_mapping[helper.node_name_from_input(
+            node.input[0])]
+        return find_relu_node(node_name_mapping, input_node.node)
+    else:
+        return False
 
 
 def add_q_dq_before_elementwise(old_graph):
@@ -89,20 +117,24 @@ def add_q_dq_before_elementwise(old_graph):
         input_name_0 = helper.node_name_from_input(node.input[0])
         input_node_0 = old_nodes_map[input_name_0]
         if input_node_0.op != "Dequantize":
+            dtype = dtypes.quint8 if find_relu_node(old_nodes_map, input_node_0) else dtypes.qint8
+
             quantize_node_name, min_output_name, max_output_name = create_quantize_node(
-                node.name, '0', output_graph, output_node_maps, node.input[0])
+                node.name, '0', output_graph, output_node_maps, node.input[0], dtype)
             dequantize_node_name = create_dequantize_node(node.name, '0', output_graph, output_node_maps,
-                                                          quantize_node_name, min_output_name, max_output_name)
+                                                          quantize_node_name, min_output_name, max_output_name, dtype)
             input_name = helper.ensure_tensor_name_has_port(node.input[0])
             inputs_to_rename[input_name] = dequantize_node_name
 
         input_name_1 = helper.node_name_from_input(node.input[1])
         input_node_1 = old_nodes_map[input_name_1]
         if input_node_1.op != "Dequantize":
-            quantize_node_name, min_output_name, max_output_name = create_quantize_node(node.name, '1', output_graph,
-                                                                                        output_node_maps, node.input[1])
+            dtype = dtypes.quint8 if find_relu_node(old_nodes_map, input_node_1) else dtypes.qint8
+
+            quantize_node_name, min_output_name, max_output_name = create_quantize_node(
+                node.name, '1', output_graph, output_node_maps, node.input[1], dtype)
             dequantize_node_name = create_dequantize_node(node.name, '1', output_graph, output_node_maps,
-                                                          quantize_node_name, min_output_name, max_output_name)
+                                                          quantize_node_name, min_output_name, max_output_name, dtype)
 
             input_name = helper.ensure_tensor_name_has_port(node.input[1])
             inputs_to_rename[input_name] = dequantize_node_name

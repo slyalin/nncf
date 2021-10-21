@@ -25,11 +25,12 @@
         "initializer": {
             "batchnorm_adaptation": {
                 "num_bn_adaptation_samples": 2048
+            },
+            "range": {
+                "type": "min_max"
             }
         },
-        "weights": {
-            "per_channel": false
-        },
+        "disable_saturation_fix": true,
         "activations": {
             "per_channel": false
         }

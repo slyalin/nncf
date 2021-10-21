@@ -106,7 +106,7 @@ To export trained model to the **SavedModel** for run it using Intel-Tensorflow 
 ```bash
 python main.py \
 --mode=export \
---config=configs/quantization/mobilenet_v1_imagenet_int8.json \
+--config=configs/quantization/mobilenet_v2_imagenet_int8.json \
 --resume=<path_to_trained_model_checkpoint> \
 --to-intel-tensorflow=.../../results/intel_tensorflow_saved_model
 ```

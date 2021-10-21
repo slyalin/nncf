@@ -24,6 +24,7 @@ from .quantize_graph_conv import FuseNodeStartWithConv2d
 from .quantize_graph_concatv2 import FuseNodeStartWithConcatV2
 from .quantize_graph_matmul import FuseNodeStartWithMatmul
 from .quantize_graph_pooling import FuseNodeStartWithPooling
+from nncf.experimental.intel_tensorflow.utils.logger import default_workspace
 
 
 class QuantizeGraphForIntel(QuantizeGraphBase):
@@ -99,7 +100,7 @@ class QuantizeGraphForIntel(QuantizeGraphBase):
                 # import tensorflow as tf
                 # tf.io.write_graph(
                 #     self.input_graph,
-                #     '/home/alexsu/work/projects/algo/nncf_tf/source/nncf-tf/lpot/examples/tensorflow/qat',
+                #     default_workspace,
                 #     f'do_quantize_{str_idx}.pb',
                 #     as_text=False)
 
@@ -115,7 +116,6 @@ class QuantizeGraphForIntel(QuantizeGraphBase):
         self.input_graph = remove_redundant_quantization(self.input_graph, self.fake_quant)
         self.input_graph = self.remove_dead_nodes(self.input_graph, self.output_node_names)
 
-        from nncf.experimental.intel_tensorflow.utils.logger import default_workspace
         import tensorflow as tf
         tf.io.write_graph(
             self.input_graph,
