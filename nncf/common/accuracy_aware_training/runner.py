@@ -61,12 +61,6 @@ class TrainingRunner(ABC):
         """
 
     @abstractmethod
-    def update_learning_rate(self) -> None:
-        """
-        Update learning rate.
-        """
-
-    @abstractmethod
     def dump_statistics(self, model: ModelType, compression_controller: CompressionAlgorithmController) -> None:
         """
         Dumps current statistics from compression_controller and dumps model's checkpoint.
@@ -90,6 +84,12 @@ class TrainingRunner(ABC):
     def configure_optimizers(self) -> None:
         """
         Initialize the training optimizer object (and, optionally, the learning rate scheduler object).
+        """
+
+    @abstractmethod
+    def update_learning_rate(self) -> None:
+        """
+        Update learning rate.
         """
 
     @abstractmethod
