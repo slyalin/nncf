@@ -57,15 +57,15 @@ class ModelInputInfo:
 
 
 def create_input_infos(config) -> List[ModelInputInfo]:
-    input_infos = config.get("input_info", [])
+    input_infos = config.get("input_info")
+    if input_infos is None:
+        return input_infos
     if isinstance(input_infos, dict):
         return [ModelInputInfo(input_infos.get("sample_size"),
                                input_infos.get("type"),
                                input_infos.get("keyword"),
                                input_infos.get("filler")), ]
     if isinstance(input_infos, list):
-        if not input_infos:
-            return [ModelInputInfo([1, 3, 224, 224])]
         return [ModelInputInfo(info_dict.get("sample_size"),
                                info_dict.get("type"),
                                info_dict.get("keyword"),
