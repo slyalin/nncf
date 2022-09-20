@@ -26,7 +26,7 @@ def quantize(model: ModelType,
              preset: QuantizationPreset = QuantizationPreset.PERFORMANCE,
              target_device: TargetDevice = TargetDevice.ANY,
              subset_size: int = 300,
-             fast_error_correction: bool = True,
+             fast_bias_correction: bool = True,
              model_type: Optional[str] = None) -> ModelType:
     """
     Applies post-training quantization algorithm to provided model.
@@ -44,7 +44,7 @@ def quantize(model: ModelType,
         for this type of device.
     :param subset_size: Size of a subset to calculate activations
         statistics used for quantization.
-    :param fast_error_correction: Setting this option to `False` enables a different
+    :param fast_bias_correction: Setting this option to `False` enables a different
         bias correction method which is more accurate, in general, and takes
         more time but requires less memory.
     :param model_type: Model type is needed to specify additional patterns
@@ -53,8 +53,23 @@ def quantize(model: ModelType,
     """
     backend = get_backend(model)
     if backend == BackendType.OPENVINO:
-        from nncf.openvino.quantization.helpers import quantize_impl
+        from nncf.openvino.quantization.quantize import quantize_impl
         return quantize_impl(model, calibration_dataset, preset, target_device, subset_size,
-                             fast_error_correction, model_type)
+                             fast_bias_correction, model_type)
+
+    if backend == BackendType.ONNX:
+        from nncf.onnx.quantization.quantize import quantize_impl
+        return quantize_impl(model, calibration_dataset, preset, target_device, subset_size,
+                             fast_bias_correction, model_type)
+
+    if backend == BackendType.TENSORFLOW:
+        from nncf.tensorflow.quantization.quantize import quantize_impl
+        return quantize_impl(model, calibration_dataset, preset, target_device, subset_size,
+                             fast_bias_correction, model_type)
+
+    if backend == BackendType.TORCH:
+        from nncf.torch.quantization.quantize import quantize_impl
+        return quantize_impl(model, calibration_dataset, preset, target_device, subset_size,
+                             fast_bias_correction, model_type)
 
     raise RuntimeError(f'Unsupported type of backend: {backend}')
