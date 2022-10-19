@@ -12,6 +12,7 @@
 """
 
 from enum import Enum
+from typing import Dict, List
 
 
 class TargetDevice(Enum):
@@ -30,3 +31,36 @@ class TargetDevice(Enum):
     CPU = 'CPU'
     GPU = 'GPU'
     VPU = 'VPU'
+
+
+class IgnoredOperation:
+    """
+    Dataclass contains description of ignored operation
+    """
+
+    def __init__(self, type: str, attributes: Dict[str, str] = None):
+        """
+        :param type: operation type
+        :param attributes: operation attributes
+        """
+        self.type = type
+        self.attributes = attributes
+
+
+class IgnoredScope:
+    """
+    Dataclass contains description of ignored scope
+    """
+
+    def __init__(self,
+                 node_names: List[str] = None,
+                 regexps: List[str] = None,
+                 operations: List[IgnoredOperation] = None):
+        """
+        :param node_names: list of ignored node names
+        :param regexps: list of ignored regexps
+        :param operations: list of ignored operations
+        """
+        self.node_names = node_names
+        self.regexps = regexps
+        self.operations = operations
