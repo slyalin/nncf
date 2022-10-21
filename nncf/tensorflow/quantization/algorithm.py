@@ -420,9 +420,6 @@ class QuantizationBuilder(TFCompressionAlgorithmBuilder):
         self._range_initializer.run(model)
 
     def _run_batchnorm_adaptation(self, model: tf.keras.Model) -> None:
-        if self._bn_adapt_params is None:
-            return
-
         if self._bn_adaptation is None:
             self._bn_adaptation = BatchnormAdaptationAlgorithm(self._bn_adapt_params['data_loader'],
                                                                self._bn_adapt_params['num_bn_adaptation_samples'],
