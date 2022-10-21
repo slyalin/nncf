@@ -56,7 +56,7 @@ class ModelInputInfo:
         return self.type == other.type and self.keyword == other.keyword
 
 
-def create_input_infos(config) -> List[ModelInputInfo]:
+def create_input_infos(config) -> Optional[List[ModelInputInfo]]:
     input_infos = config.get("input_info")
     if input_infos is None:
         return input_infos

@@ -50,12 +50,9 @@ class PostTrainingQuantizationParameters(AlgorithmParameters):
                  range_type: RangeType = RangeType.MEAN_MINMAX,
                  number_samples: int = 300,
                  target_device: HWConfigType = HWConfigType.CPU,
-                 ignored_scopes: Optional[List[str]] = None):
-        weight_mode, activation_mode = self._determine_weight_activation_modes(preset)
-        self.weight_quantizer_config = self._determine_quantizer_config(weight_bits, weight_granularity, weight_mode)
-        self.activation_quantizer_config = self._determine_quantizer_config(activation_bits, activation_granularity,
-                                                                            activation_mode)
-
+                 quantize_outputs: bool = False,
+                 ignored_scopes: Optional[List[str]] = None
+                 ):
         self.algorithms = {PostTrainingAlgorithms.MinMaxQuantization: MinMaxQuantizationParameters(
             preset=preset,
             weight_bits=weight_bits,
