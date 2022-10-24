@@ -12,5 +12,5 @@
 """
 
 from nncf.quantization.params import TargetDevice
-from nncf.quantization.helpers import quantize
+from nncf.quantization.quantize import quantize
 from nncf.common.quantization.structs import QuantizationPreset
