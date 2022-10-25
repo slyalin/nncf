@@ -15,16 +15,56 @@ from typing import Optional
 
 import onnx
 
+from nncf import Dataset
 from nncf.common.quantization.structs import QuantizationPreset
 from nncf.experimental.post_training.compression_builder import CompressionBuilder
 from nncf.experimental.post_training.algorithms.quantization import PostTrainingQuantization
 from nncf.experimental.post_training.algorithms.quantization import PostTrainingQuantizationParameters
-from nncf.experimental.ptq.data.dataloader import NNCFDataLoader
-from nncf.onnx.dataloader import ONNXDataset
+from nncf.experimental.post_training.api.dataset import Dataset as PTQDataset
+
+
+
+# It should be removed when we change all algorithms.
+class CalibrationDataset(PTQDataset):
+    """
+    Wraps nncf.Dataset to make it suitable for ONNX post training experomantal API.
+    """
+
+    def __init__(self, dataset: Dataset):
+        """
+        :param dataloader: A `NNCFDataLoader` object.
+        """
+        super().__init__()
+        self._dataset = dataset
+        self._length = None
+        self.
+
+    def __len__(self) -> int:
+        if self._length is None:
+            self._length = CalibrationDataset._get_length(self._dataset.get_data())
+        return self._length
+
+    def __getitem__(self, index: int):
+        item = self._dataloader[index]
+
+        if isinstance(item, dict):
+            for key in item:
+                if not isinstance(item[key], np.ndarray):
+                    raise RuntimeError('The input tensor should be numpy ndarray')
+                item[key] = ONNXNNCFTensor(item[key])
+        return item
+
+    @staticmethod
+    def _get_length(iterable) -> int:
+        length = 0
+        for _ in iterable:
+            length = length + 1
+
+        return length
 
 
 def quantize_impl(model: onnx.ModelProto,
-                  calibration_dataset: NNCFDataLoader,
+                  calibration_dataset: Dataset,
                   preset: str,
                   target_device: str,
                   subset_size: int,
