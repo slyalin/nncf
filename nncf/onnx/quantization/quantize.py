@@ -13,21 +13,22 @@
 
 from typing import Optional
 
+import numpy as np
 import onnx
 
 from nncf import Dataset
 from nncf.common.quantization.structs import QuantizationPreset
-from nncf.experimental.post_training.compression_builder import CompressionBuilder
+from nncf.experimental.onnx.tensor import ONNXNNCFTensor
 from nncf.experimental.post_training.algorithms.quantization import PostTrainingQuantization
 from nncf.experimental.post_training.algorithms.quantization import PostTrainingQuantizationParameters
 from nncf.experimental.post_training.api.dataset import Dataset as PTQDataset
+from nncf.experimental.post_training.compression_builder import CompressionBuilder
 
 
-
-# It should be removed when we change all algorithms.
-class CalibrationDataset(PTQDataset):
+# TODO(alexsu52): It is a workaround and should be removed.
+class ONNXDataset(PTQDataset):
     """
-    Wraps nncf.Dataset to make it suitable for ONNX post training experomantal API.
+    Wraps nncf.Dataset to make it suitable for ONNX post training experimental API.
     """
 
     def __init__(self, dataset: Dataset):
@@ -37,16 +38,38 @@ class CalibrationDataset(PTQDataset):
         super().__init__()
         self._dataset = dataset
         self._length = None
-        self.
+        self._it = None
+        self._elem = None
+        self._elem_idx = -1
 
     def __len__(self) -> int:
         if self._length is None:
-            self._length = CalibrationDataset._get_length(self._dataset.get_data())
+            data = self._dataset.get_inference_data()
+            self._length = ONNXDataset._get_length(data)
         return self._length
 
     def __getitem__(self, index: int):
-        item = self._dataloader[index]
+        if index == self._elem_idx:
+            return self._elem
 
+        if self._it is None or index < self._elem_idx:
+            self._it = iter(self._dataset.get_inference_data())
+            self._elem_idx = -1
+
+        while self._elem_idx != index:
+            try:
+                self._elem = next(self._it)
+                self._elem_idx = self._elem_idx + 1
+            except StopIteration:
+                self._it = None
+                self._elem = None
+                self._elem_idx = -1
+                break
+
+        if self._elem is None:
+            raise IndexError('Index out of range.')
+
+        item = self._elem
         if isinstance(item, dict):
             for key in item:
                 if not isinstance(item[key], np.ndarray):
