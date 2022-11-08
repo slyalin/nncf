@@ -18,6 +18,7 @@ from typing import Dict, List, Tuple
 
 import nncf
 import openvino.runtime as ov
+from openvino.tools.mo import convert_model  # TODO: will be: from openvino.runtime import convert_model
 import tensorflow as tf
 import tensorflow_datasets as tfds
 from tensorflow.python.keras.metrics import Metric
@@ -60,21 +61,7 @@ def run_example():
     # that has been quantized using the calibration dataset.
     quantized_model = nncf.quantize(model, calibration_dataset)
 
-    # Step 4: Save the quantized TensorFlow Keras model.
-    if not MODEL_DIR.exists():
-        os.makedirs(MODEL_DIR)
-
-    model_name = 'mobilenet_v2'
-    saved_model_dir = MODEL_DIR / model_name
-    quantized_model.save(saved_model_dir)
-    print(f'The quantized model is exported to {saved_model_dir}')
-
-    # Step 5: Run OpenVINO Model Optimizer to convert TensorFlow model to OpenVINO IR.
-    mo_command = f'mo --saved_model_dir {saved_model_dir} ' \
-                 f'--model_name {model_name} --output_dir {MODEL_DIR}'
-    subprocess.call(mo_command, shell=True)
-
-    # Step 6: Compare the accuracy of the original and quantized models.
+    # Step 4: Compare the accuracy of the original and quantized models.
     print('Checking the accuracy of the original model:')
 
     metrics = [
@@ -88,9 +75,9 @@ def run_example():
 
     print('Checking the accuracy of the quantized model:')
     ie = ov.Core()
-    ir_model_xml = MODEL_DIR / f'{model_name}.xml'
-    ir_model_bin = MODEL_DIR / f'{model_name}.bin'
-    ir_quantized_model = ie.read_model(model=ir_model_xml, weights=ir_model_bin)
+
+    ir_quantized_model = convert_model(quantized_model)
+
     quantized_compiled_model = ie.compile_model(ir_quantized_model, device_name='CPU')
     quantized_results = validate(quantized_compiled_model, metrics, data_source)
     print(f'The quantized model accuracy@top1: {quantized_results[0]:.4f}')
